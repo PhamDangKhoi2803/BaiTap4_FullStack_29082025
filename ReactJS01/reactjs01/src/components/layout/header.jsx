@@ -1,6 +1,6 @@
 // src/components/layout/Header.jsx
 import React, { useContext, useState } from 'react';
-import { UsergroupAddOutlined, HomeOutlined, SettingOutlined } from '@ant-design/icons';
+import { UsergroupAddOutlined, HomeOutlined, SettingOutlined, ShoppingOutlined } from '@ant-design/icons';
 import { Menu } from 'antd';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/auth.context';
@@ -55,6 +55,11 @@ const Header = () => {
           },
         ]
       : []),
+      {
+        label: <Link to="/products">Products</Link>,
+        key: 'products',
+        icon: <ShoppingOutlined />,
+      },
     {
       // nếu chưa đăng nhập hiển thị "Account" (hoặc 'Welcome' nếu muốn)
       label: auth?.isAuthenticated ? `Welcome ${auth.user?.email ?? ''}` : 'Account',

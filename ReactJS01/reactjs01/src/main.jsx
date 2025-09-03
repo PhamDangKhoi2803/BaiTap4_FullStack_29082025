@@ -7,19 +7,59 @@ import RegisterPage from './pages/register.jsx';
 import UserPage from './pages/user.jsx';
 import HomePage from './pages/home.jsx';
 import LoginPage from './pages/login.jsx';
+
+import ProductsPage from './pages/products.jsx';
+import ProductForm from './pages/product-form.jsx';
+
 import { AuthWrapper } from './components/context/auth.wrapper.jsx';
 
 const router = createBrowserRouter([
   {
-    path: "/",
+    path: '/',
     element: <App />,
     children: [
-      { index: true, element: <HomePage /> },
-      { path: "user", element: <UserPage /> },
-    ]
+      {
+        index: true,
+        element: <HomePage />,
+      },
+      {
+        path: 'login',
+        element: <LoginPage />,
+      },
+      {
+        path: 'register',
+        element: <RegisterPage />,
+      },
+      {
+        path: 'user',
+        element: (
+          <AuthWrapper>
+            <UserPage />
+          </AuthWrapper>
+        ),
+      },
+      {
+        path: 'products',
+        element: <ProductsPage />,
+      },
+      {
+        path: 'products/create',
+        element: (
+          <AuthWrapper>
+            <ProductForm />
+          </AuthWrapper>
+        ),
+      },
+      {
+        path: 'products/edit/:id',
+        element: (
+          <AuthWrapper>
+            <ProductForm />
+          </AuthWrapper>
+        ),
+      },
+    ],
   },
-  { path: "login", element: <LoginPage /> },
-  { path: "register", element: <RegisterPage /> },
 ]);
 
 ReactDOM.createRoot(document.getElementById('root')).render(

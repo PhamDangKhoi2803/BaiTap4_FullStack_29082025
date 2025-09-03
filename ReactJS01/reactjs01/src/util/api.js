@@ -17,4 +17,47 @@ const getUserApi = () => {
   return axios.get(URL_API);
 };
 
-export { createUserApi, loginApi, getUserApi };
+// Các API mới cho sản phẩm
+const createProductApi = (productData) => {
+  const URL_API = "/v1/api/products";
+  return axios.post(URL_API, productData);
+};
+
+const getAllProductsApi = (params = {}) => {
+  const URL_API = "/v1/api/products";
+  return axios.get(URL_API, { params });
+};
+
+const searchProductsApi = (keyword, page = 1, limit = 10) => {
+  const URL_API = "/v1/api/products/search";
+  return axios.get(URL_API, { 
+    params: { keyword, page, limit } 
+  });
+};
+
+const getProductByIdApi = (id) => {
+  const URL_API = `/v1/api/products/${id}`;
+  return axios.get(URL_API);
+};
+
+const updateProductApi = (id, productData) => {
+  const URL_API = `/v1/api/products/${id}`;
+  return axios.put(URL_API, productData);
+};
+
+const deleteProductApi = (id) => {
+  const URL_API = `/v1/api/products/${id}`;
+  return axios.delete(URL_API);
+};
+
+export { 
+  createUserApi, 
+  loginApi, 
+  getUserApi,
+  createProductApi,
+  getAllProductsApi,
+  searchProductsApi,
+  getProductByIdApi,
+  updateProductApi,
+  deleteProductApi
+};

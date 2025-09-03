@@ -5,6 +5,16 @@ const {
   getUser,
   getAccount,
 } = require("../controllers/userController");
+
+const {
+  createProduct,
+  getAllProducts,
+  getProductById,
+  updateProduct,
+  deleteProduct,
+  searchProducts
+} = require("../controllers/productController");
+
 const auth = require("../middleware/auth");
 const delay = require("../middleware/delay");
 const routerAPI = express.Router();
@@ -14,6 +24,14 @@ routerAPI.get("/", (req, res) => {
 });
 routerAPI.post("/register", createUser);
 routerAPI.post("/login", handleLogin);
+
+// Routes mới cho sản phẩm
+routerAPI.post("/products", auth, createProduct);
+routerAPI.get("/products", getAllProducts); // Không cần auth để xem sản phẩm
+routerAPI.get("/products/search", searchProducts);
+routerAPI.get("/products/:id", getProductById);
+routerAPI.put("/products/:id", auth, updateProduct);
+routerAPI.delete("/products/:id", auth, deleteProduct);
 
 
 // Route cần bảo vệ - thêm middleware auth
