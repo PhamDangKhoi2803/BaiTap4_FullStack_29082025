@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Table, Button, Input, Space, Pagination, notification, Popconfirm } from 'antd';
+import { Table, Button, Input, Space, Pagination, notification, Popconfirm, Select } from 'antd';
 import { SearchOutlined, PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { getAllProductsApi, deleteProductApi, searchProductsApi } from '../util/api';
 import { useNavigate } from 'react-router-dom';
@@ -13,6 +13,20 @@ const ProductsPage = () => {
     total: 0
   });
   const [searchKeyword, setSearchKeyword] = useState('');
+
+  const [selectedCategory, setSelectedCategory] = useState('');
+  const [minPrice, setMinPrice] = useState('');
+  const [maxPrice, setMaxPrice] = useState('');
+  const [promotion, setPromotion] = useState('');
+  const [minViews, setMinViews] = useState('');
+  const [maxViews, setMaxViews] = useState('');
+  const categories = [
+    { value: 'electronics', label: 'Điện tử' },
+    { value: 'clothing', label: 'Quần áo' },
+    { value: 'books', label: 'Sách' },
+    { value: 'food', label: 'Thực phẩm' },
+  ];
+
   const navigate = useNavigate();
 
   const fetchProducts = async (page = 1, limit = 10, category = '') => {
@@ -42,15 +56,20 @@ const ProductsPage = () => {
   };
 
   const handleSearch = async () => {
-    if (!searchKeyword.trim()) {
-      fetchProducts(1, pagination.pageSize);
-      return;
-    }
-    
     try {
       setLoading(true);
-      const res = await searchProductsApi(searchKeyword, 1, pagination.pageSize);
-      
+      const params = {
+        keyword: searchKeyword,
+        category: selectedCategory,
+        minPrice: minPrice ? Number(minPrice) : undefined,
+        maxPrice: maxPrice ? Number(maxPrice) : undefined,
+        promotion: promotion !== '' ? promotion : undefined,
+        minViews: minViews ? Number(minViews) : undefined,
+        maxViews: maxViews ? Number(maxViews) : undefined,
+        page: 1,
+        limit: pagination.pageSize
+      };
+      const res = await searchProductsApi(params);
       if (res && res.products) {
         setProducts(res.products);
         setPagination({
@@ -98,6 +117,18 @@ const ProductsPage = () => {
   }, []);
 
   const columns = [
+    {
+      title: 'Hình ảnh',
+      dataIndex: 'image', // hoặc 'imageUrl' tùy theo dữ liệu
+      key: 'image',
+      render: (text, record) => (
+        <img
+          src={record.imageUrl || record.image} // đường dẫn ảnh
+          alt={record.name}
+          style={{ width: 60, height: 40, objectFit: 'cover' }}
+        />
+      ),
+    },
     {
       title: 'ID',
       dataIndex: '_id',
@@ -152,8 +183,49 @@ const ProductsPage = () => {
             placeholder="Tìm kiếm sản phẩm"
             value={searchKeyword}
             onChange={(e) => setSearchKeyword(e.target.value)}
-            onPressEnter={handleSearch}
-            style={{ width: 300 }}
+            style={{ width: 180 }}
+          />
+          <Select
+            placeholder="Danh mục"
+            value={selectedCategory}
+            onChange={(value) => setSelectedCategory(value)}
+            style={{ width: 120 }}
+            allowClear
+            options={categories}
+          />
+          <Input
+            placeholder="Giá từ"
+            type="number"
+            value={minPrice}
+            onChange={(e) => setMinPrice(e.target.value)}
+            style={{ width: 100 }}
+          />
+          <Input
+            placeholder="Giá đến"
+            type="number"
+            value={maxPrice}
+            onChange={(e) => setMaxPrice(e.target.value)}
+            style={{ width: 100 }}
+          />
+          <Input
+            placeholder="Khuyến mãi (true/false)"
+            value={promotion}
+            onChange={(e) => setPromotion(e.target.value)}
+            style={{ width: 120 }}
+          />
+          <Input
+            placeholder="Lượt xem từ"
+            type="number"
+            value={minViews}
+            onChange={(e) => setMinViews(e.target.value)}
+            style={{ width: 100 }}
+          />
+          <Input
+            placeholder="Lượt xem đến"
+            type="number"
+            value={maxViews}
+            onChange={(e) => setMaxViews(e.target.value)}
+            style={{ width: 100 }}
           />
           <Button type="primary" icon={<SearchOutlined />} onClick={handleSearch}>
             Tìm kiếm

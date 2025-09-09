@@ -119,15 +119,20 @@ const deleteProduct = async (req, res) => {
 // Tìm kiếm sản phẩm
 const searchProducts = async (req, res) => {
   try {
-    const { keyword, page = 1, limit = 10 } = req.query;
-    
-    if (!keyword) {
-      return res.status(400).json({
-        message: "Vui lòng nhập từ khóa tìm kiếm!"
-      });
-    }
-    
-    const result = await searchProductsService(keyword, parseInt(page), parseInt(limit));
+    const {
+      keyword,
+      category,
+      minPrice,
+      maxPrice,
+      promotion,
+      minViews,
+      maxViews,
+      page = 1,
+      limit = 10
+    } = req.query;
+
+    const params = { keyword, category, minPrice, maxPrice, promotion, minViews, maxViews };
+    const result = await searchProductsService(params, parseInt(page), parseInt(limit));
     return res.status(200).json(result);
   } catch (error) {
     return res.status(500).json({

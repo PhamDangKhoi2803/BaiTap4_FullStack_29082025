@@ -28,11 +28,9 @@ const getAllProductsApi = (params = {}) => {
   return axios.get(URL_API, { params });
 };
 
-const searchProductsApi = (keyword, page = 1, limit = 10) => {
+const searchProductsApi = (params = {}) => {
   const URL_API = "/v1/api/products/search";
-  return axios.get(URL_API, { 
-    params: { keyword, page, limit } 
-  });
+  return axios.get(URL_API, { params });
 };
 
 const getProductByIdApi = (id) => {

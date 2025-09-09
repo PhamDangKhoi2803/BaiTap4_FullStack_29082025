@@ -1,4 +1,5 @@
 const Product = require("../models/products");
+const esClient = require('../config/elasticsearch');
 
 // Tạo sản phẩm mới
 const createProductService = async (productData) => {
@@ -80,24 +81,50 @@ const deleteProductService = async (id) => {
 };
 
 // Tìm kiếm sản phẩm
-const searchProductsService = async (keyword, page = 1, limit = 10) => {
+const searchProductsService = async (params, page = 1, limit = 10) => {
   try {
     const skip = (page - 1) * limit;
-    
-    const query = {
-      $or: [
-        { name: { $regex: keyword, $options: 'i' } }, // Tìm theo tên, không phân biệt hoa thường
-        { description: { $regex: keyword, $options: 'i' } } // Tìm theo mô tả
-      ]
-    };
-    
+    const query = {};
+
+    // Fuzzy search theo tên/mô tả
+    if (params.keyword) {
+      query.$or = [
+        { name: { $regex: params.keyword, $options: 'i' } },
+        { description: { $regex: params.keyword, $options: 'i' } }
+      ];
+    }
+
+    // Lọc theo danh mục
+    if (params.category) {
+      query.category = params.category;
+    }
+
+    // Lọc theo giá
+    if (params.minPrice || params.maxPrice) {
+      query.price = {};
+      if (params.minPrice) query.price.$gte = Number(params.minPrice);
+      if (params.maxPrice) query.price.$lte = Number(params.maxPrice);
+    }
+
+    // Lọc theo khuyến mãi
+    if (params.promotion !== undefined) {
+      query.promotion = params.promotion === 'true' || params.promotion === true;
+    }
+
+    // Lọc theo lượt xem
+    if (params.minViews || params.maxViews) {
+      query.views = {};
+      if (params.minViews) query.views.$gte = Number(params.minViews);
+      if (params.maxViews) query.views.$lte = Number(params.maxViews);
+    }
+
     const products = await Product.find(query)
       .skip(skip)
       .limit(limit)
       .sort({ createdAt: -1 });
-    
+
     const total = await Product.countDocuments(query);
-    
+
     return {
       products,
       totalPages: Math.ceil(total / limit),
