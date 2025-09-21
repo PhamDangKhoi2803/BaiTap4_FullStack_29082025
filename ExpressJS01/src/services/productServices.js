@@ -94,6 +94,11 @@ const searchProductsService = async (params, page = 1, limit = 10) => {
       ];
     }
 
+    // Thêm điều kiện owner
+    if (params.owner) {
+    query.owner = params.owner;
+    }
+
     // Lọc theo danh mục
     if (params.category) {
       query.category = params.category;

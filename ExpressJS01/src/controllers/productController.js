@@ -10,7 +10,7 @@ const {
 // Tạo sản phẩm mới
 const createProduct = async (req, res) => {
   try {
-    const productData = req.body;
+    const productData = { ...req.body, owner: req.user._id }; // Gán owner
     const product = await createProductService(productData);
 
     if (!product) {
@@ -35,7 +35,7 @@ const getAllProducts = async (req, res) => {
   try {
     // Xử lý query params
     const { category, page = 1, limit = 10 } = req.query;
-    const query = {};
+    const query = {owner: req.user._id}; // Mặc định chỉ lấy sản phẩm của user hiện tại
     
     if (category) {
       query.category = category;
@@ -75,7 +75,7 @@ const updateProduct = async (req, res) => {
   try {
     const { id } = req.params;
     const updateData = req.body;
-    const product = await updateProductService(id, updateData);
+    const product = await getProductByIdService(id);
 
     if (!product) {
       return res.status(404).json({
@@ -83,9 +83,15 @@ const updateProduct = async (req, res) => {
       });
     }
 
+    // Chỉ owner hoặc admin mới được sửa
+    if (product.owner.toString() !== req.user._id.toString() && req.user.role !== 'admin') {
+      return res.status(403).json({ message: "Bạn không có quyền sửa sản phẩm này!" });
+    }
+
+    const updated = await updateProductService(id, updateData);
     return res.status(200).json({
       message: "Cập nhật sản phẩm thành công!",
-      product
+      product: updated
     });
   } catch (error) {
     return res.status(500).json({
@@ -98,13 +104,20 @@ const updateProduct = async (req, res) => {
 const deleteProduct = async (req, res) => {
   try {
     const { id } = req.params;
-    const product = await deleteProductService(id);
+    const product = await getProductByIdService(id);
 
     if (!product) {
       return res.status(404).json({
         message: "Không tìm thấy sản phẩm để xóa!"
       });
     }
+
+    // Chỉ owner hoặc admin mới được xóa
+    if (product.owner.toString() !== req.user._id.toString() && req.user.role !== 'admin') {
+      return res.status(403).json({ message: "Bạn không có quyền xóa sản phẩm này!" });
+    }
+
+    await deleteProductService(id);
 
     return res.status(200).json({
       message: "Xóa sản phẩm thành công!"
@@ -131,7 +144,7 @@ const searchProducts = async (req, res) => {
       limit = 10
     } = req.query;
 
-    const params = { keyword, category, minPrice, maxPrice, promotion, minViews, maxViews };
+    const params = { keyword, category, minPrice, maxPrice, promotion, minViews, maxViews, owner: req.user._id };
     const result = await searchProductsService(params, parseInt(page), parseInt(limit));
     return res.status(200).json(result);
   } catch (error) {

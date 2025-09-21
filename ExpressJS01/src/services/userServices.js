@@ -80,7 +80,18 @@ const getUserService = async () => {
   }
 }
 
+// Thêm hàm mới để lấy thông tin user theo ID
+const getUserByIdService = async (userId) => {
+  try {
+    let result = await User.findById(userId).select("-password");
+    return result;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+};
+
 // export function
 module.exports = {
-  createUserService,loginService, getUserService
+  createUserService,loginService, getUserService, getUserByIdService
 };

@@ -3,7 +3,9 @@ const jwt = require("jsonwebtoken");
 const { create } = require("../models/users");
 const { model } = require("mongoose");
 
-const auth = (req, res, next) => {
+const User = require('../models/users');
+
+const auth = async(req, res, next) => {
   // Định nghĩa white list không cần auth
   const white_lists = ["/v1/api/", "/v1/api/register", "/v1/api/login"];
   
@@ -24,9 +26,16 @@ const auth = (req, res, next) => {
   
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    // Lấy user từ DB để lấy _id và role
+    const user = await User.findOne({ email: decoded.email });
+    if (!user) return res.status(401).json({ message: "User không tồn tại" });
+
     req.user = {
+      _id: user._id,
       email: decoded.email,
       name: decoded.name,
+      role: user.role,
       createdBy: 'hoidatit'
     }
     next();

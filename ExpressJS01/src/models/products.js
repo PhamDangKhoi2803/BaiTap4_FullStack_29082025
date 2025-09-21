@@ -8,7 +8,8 @@ const productSchema = new mongoose.Schema({
   image: { type: String, default: '' },
   stock: { type: Number, default: 0 },
   createdAt: { type: Date, default: Date.now },
-  updatedAt: { type: Date, default: Date.now }
+  updatedAt: { type: Date, default: Date.now },
+  owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }
 });
 
 const Product = mongoose.model('Product', productSchema);

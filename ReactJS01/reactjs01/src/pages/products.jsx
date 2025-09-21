@@ -17,9 +17,9 @@ const ProductsPage = () => {
   const [selectedCategory, setSelectedCategory] = useState('');
   const [minPrice, setMinPrice] = useState('');
   const [maxPrice, setMaxPrice] = useState('');
-  const [promotion, setPromotion] = useState('');
-  const [minViews, setMinViews] = useState('');
-  const [maxViews, setMaxViews] = useState('');
+  // const [promotion, setPromotion] = useState('');
+  // const [minViews, setMinViews] = useState('');
+  // const [maxViews, setMaxViews] = useState('');
   const categories = [
     { value: 'electronics', label: 'Điện tử' },
     { value: 'clothing', label: 'Quần áo' },
@@ -63,9 +63,9 @@ const ProductsPage = () => {
         category: selectedCategory,
         minPrice: minPrice ? Number(minPrice) : undefined,
         maxPrice: maxPrice ? Number(maxPrice) : undefined,
-        promotion: promotion !== '' ? promotion : undefined,
-        minViews: minViews ? Number(minViews) : undefined,
-        maxViews: maxViews ? Number(maxViews) : undefined,
+        // promotion: promotion !== '' ? promotion : undefined,
+        // minViews: minViews ? Number(minViews) : undefined,
+        // maxViews: maxViews ? Number(maxViews) : undefined,
         page: 1,
         limit: pagination.pageSize
       };
@@ -207,7 +207,7 @@ const ProductsPage = () => {
             onChange={(e) => setMaxPrice(e.target.value)}
             style={{ width: 100 }}
           />
-          <Input
+          {/* <Input
             placeholder="Khuyến mãi (true/false)"
             value={promotion}
             onChange={(e) => setPromotion(e.target.value)}
@@ -226,7 +226,7 @@ const ProductsPage = () => {
             value={maxViews}
             onChange={(e) => setMaxViews(e.target.value)}
             style={{ width: 100 }}
-          />
+          /> */}
           <Button type="primary" icon={<SearchOutlined />} onClick={handleSearch}>
             Tìm kiếm
           </Button>

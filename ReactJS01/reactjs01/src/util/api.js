@@ -6,6 +6,11 @@ const createUserApi = (name, email, password) => {
   return axios.post(URL_API, data);
 };
 
+const updateUserApi = (userId, userData) => {
+  const URL_API = `/v1/api/user/${userId}`;
+  return axios.put(URL_API, userData);
+};
+
 const loginApi = (email, password) => {
   const URL_API = "/v1/api/login";
   const data = { email, password };
@@ -57,5 +62,6 @@ export {
   searchProductsApi,
   getProductByIdApi,
   updateProductApi,
-  deleteProductApi
+  deleteProductApi,
+  updateUserApi,
 };

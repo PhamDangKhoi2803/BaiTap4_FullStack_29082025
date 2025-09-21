@@ -4,6 +4,7 @@ const {
   handleLogin,
   getUser,
   getAccount,
+  updateUser,
 } = require("../controllers/userController");
 
 const {
@@ -27,8 +28,8 @@ routerAPI.post("/login", handleLogin);
 
 // Routes mới cho sản phẩm
 routerAPI.post("/products", auth, createProduct);
-routerAPI.get("/products", getAllProducts); // Không cần auth để xem sản phẩm
-routerAPI.get("/products/search", searchProducts);
+routerAPI.get("/products", auth,getAllProducts); // Không cần auth để xem sản phẩm
+routerAPI.get("/products/search", auth,searchProducts);
 routerAPI.get("/products/:id", getProductById);
 routerAPI.put("/products/:id", auth, updateProduct);
 routerAPI.delete("/products/:id", auth, deleteProduct);
@@ -37,4 +38,7 @@ routerAPI.delete("/products/:id", auth, deleteProduct);
 // Route cần bảo vệ - thêm middleware auth
 routerAPI.get("/user", auth, getUser);
 routerAPI.get("/account", auth, delay, getAccount);
+
+routerAPI.put("/user/:userId", auth, updateUser);
+
 module.exports = routerAPI; //export default
