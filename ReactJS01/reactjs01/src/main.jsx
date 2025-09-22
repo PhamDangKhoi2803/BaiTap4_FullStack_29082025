@@ -10,6 +10,8 @@ import LoginPage from './pages/login.jsx';
 
 import ProductsPage from './pages/products.jsx';
 import ProductForm from './pages/product-form.jsx';
+import ProductDetail from './pages/product-detail.jsx';
+import FavoriteTab from './pages/FavoriteTab.jsx';
 
 import { AuthWrapper } from './components/context/auth.wrapper.jsx';
 
@@ -57,6 +59,15 @@ const router = createBrowserRouter([
             <ProductForm />
           </AuthWrapper>
         ),
+      },
+      {
+        path: 'products/:id',
+        element: <ProductDetail />,
+      },
+      
+      {
+        path: 'favorites',
+        element: <FavoriteTab />,
       },
     ],
   },

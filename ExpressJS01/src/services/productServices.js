@@ -142,6 +142,30 @@ const searchProductsService = async (params, page = 1, limit = 10) => {
   }
 };
 
+const getAllProductsWithOwnerService = async (query = {}, page = 1, limit = 10) => {
+  try {
+    const skip = (page - 1) * limit;
+
+    const products = await Product.find(query)
+      .populate('owner', 'name email') // Thêm dòng này để lấy thông tin user
+      .skip(skip)
+      .limit(limit)
+      .sort({ createdAt: -1 });
+
+    const total = await Product.countDocuments(query);
+
+    return {
+      products,
+      totalPages: Math.ceil(total / limit),
+      currentPage: page,
+      total
+    };
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+};
+
 // Export các function
 module.exports = {
   createProductService,
@@ -149,5 +173,6 @@ module.exports = {
   getProductByIdService,
   updateProductService,
   deleteProductService,
-  searchProductsService
+  searchProductsService,
+  getAllProductsWithOwnerService
 };

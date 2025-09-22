@@ -7,6 +7,109 @@ const {
   searchProductsService
 } = require("../services/productServices");
 
+const Product = require('../models/products');
+const Comment = require('../models/comments');
+const { get, default: mongoose } = require("mongoose");
+
+
+// Yêu thích sản phẩm
+const favoriteProduct = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user._id;
+    const product = await Product.findById(id);
+    if (!product) return res.status(404).json({ message: "Không tìm thấy sản phẩm!" });
+
+    const index = product.favorites.indexOf(userId);
+    if (index === -1) {
+      product.favorites.push(userId);
+    } else {
+      product.favorites.splice(index, 1);
+    }
+    await product.save();
+    res.json({ favorites: product.favorites });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+//Lấy sản tất cả phẩm yêu thích
+const getFavoriteProducts = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const products = await Product.find({ favorites: userId });
+    res.json(products);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Đã xem sản phẩm
+const viewProduct = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user._id;
+    const product = await Product.findById(id);
+    if (!product) return res.status(404).json({ message: "Không tìm thấy sản phẩm!" });
+
+    // So sánh kiểu dữ liệu ObjectId
+    const viewed = product.views.map(v => v.toString());
+    if (!viewed.includes(userId.toString())) {
+      product.views.push(userId);
+      await product.save();
+    }
+    res.json({ views: product.views.length });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Đã mua sản phẩm
+const buyProduct = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user._id;
+    const product = await Product.findById(id);
+    if (!product) return res.status(404).json({ message: "Không tìm thấy sản phẩm!" });
+
+    if (!product.buyers.includes(userId)) {
+      product.buyers.push(userId);
+      await product.save();
+    }
+    res.json({ buyers: product.buyers.length });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Sản phẩm tương tự
+const getSimilarProducts = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const product = await Product.findById(id);
+    if (!product) return res.status(404).json({ message: "Không tìm thấy sản phẩm!" });
+
+    const similar = await Product.find({
+      category: product.category,
+      _id: { $ne: id }
+    }).limit(5);
+    res.json(similar);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Đếm số bình luận
+const getProductCommentsCount = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const count = await Comment.countDocuments({ product: id });
+    res.json({ productId: id, commentsCount: count });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 // Tạo sản phẩm mới
 const createProduct = async (req, res) => {
   try {
@@ -154,11 +257,29 @@ const searchProducts = async (req, res) => {
   }
 };
 
+const getAllProductsWithOwner = async (req, res) => {
+  try {
+    // Không lọc theo owner, lấy tất cả sản phẩm
+    const products = await Product.find({}).populate('owner', 'name email');
+    res.json(products);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
 module.exports = {
   createProduct,
   getAllProducts,
   getProductById,
   updateProduct,
   deleteProduct,
-  searchProducts
+  searchProducts,
+  favoriteProduct,
+  viewProduct,
+  buyProduct,
+  getSimilarProducts,
+  getProductCommentsCount,
+  getAllProductsWithOwner,
+  getFavoriteProducts
 };

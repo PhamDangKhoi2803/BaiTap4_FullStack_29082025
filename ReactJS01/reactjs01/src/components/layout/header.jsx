@@ -1,6 +1,6 @@
 // src/components/layout/Header.jsx
 import React, { useContext, useState } from 'react';
-import { UsergroupAddOutlined, HomeOutlined, SettingOutlined, ShoppingOutlined } from '@ant-design/icons';
+import { UsergroupAddOutlined, HomeOutlined, SettingOutlined, ShoppingOutlined, HeartFilled, HeartOutlined } from '@ant-design/icons';
 import { Menu } from 'antd';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/auth.context';
@@ -52,6 +52,11 @@ const Header = () => {
             label: <Link to="/user">Users</Link>,
             key: 'user',
             icon: <UsergroupAddOutlined />,
+          },
+          {
+            label: <Link to="/favorites">Yêu thích</Link>, // <-- Thêm dòng này
+            key: 'favorites',
+            icon: <HeartOutlined />, // Có thể dùng icon khác nếu muốn
           },
         ]
       : []),

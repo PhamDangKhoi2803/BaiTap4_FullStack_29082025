@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Table, Button, Input, Space, Pagination, notification, Popconfirm, Select } from 'antd';
 import { SearchOutlined, PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { getAllProductsApi, deleteProductApi, searchProductsApi } from '../util/api';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 const ProductsPage = () => {
   const [products, setProducts] = useState([]);
@@ -140,6 +140,9 @@ const ProductsPage = () => {
       title: 'Tên sản phẩm',
       dataIndex: 'name',
       key: 'name',
+      render: (text, record) => (
+        <Link to={`/products/${record._id}`}>{text}</Link>
+      ),
     },
     {
       title: 'Giá',

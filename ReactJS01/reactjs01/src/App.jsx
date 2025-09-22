@@ -5,6 +5,7 @@ import axios from "./util/axios.customize";
 import { useContext, useEffect } from "react";
 import { AuthContext } from "./components/context/auth.context";
 import { Spin } from "antd";
+import './styles/global.css';
 
 function App() {
   const { setAuth, appLoading, setAppLoading } = useContext(AuthContext);
@@ -16,11 +17,15 @@ function App() {
         const res = await axios.get(`/v1/api/user`);
 
         if (res && !res.message) {
+          // Nếu là mảng (user thường), lấy phần tử đầu tiên
+          const userData = Array.isArray(res) ? res[0] : res;
           setAuth({
             isAuthenticated: true,
             user: {
-              email: res.email,
-              name: res.name,
+              email: userData.email,
+              name: userData.name,
+              _id: userData._id,
+              role: userData.role,
             },
           });
         }
@@ -32,7 +37,7 @@ function App() {
     };
 
     fetchAccount();
-  }, [setAuth, setAppLoading]);
+  }, []);
 
   return (
     <div>

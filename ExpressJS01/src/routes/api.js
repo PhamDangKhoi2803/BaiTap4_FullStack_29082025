@@ -13,7 +13,15 @@ const {
   getProductById,
   updateProduct,
   deleteProduct,
-  searchProducts
+  searchProducts,
+
+  favoriteProduct,
+  viewProduct,
+  buyProduct,
+  getSimilarProducts,
+  getProductCommentsCount,
+  getAllProductsWithOwner,
+  getFavoriteProducts,
 } = require("../controllers/productController");
 
 const auth = require("../middleware/auth");
@@ -33,6 +41,15 @@ routerAPI.get("/products/search", auth,searchProducts);
 routerAPI.get("/products/:id", getProductById);
 routerAPI.put("/products/:id", auth, updateProduct);
 routerAPI.delete("/products/:id", auth, deleteProduct);
+
+routerAPI.get("/products_with_owner", getAllProductsWithOwner);
+
+routerAPI.post("/products/:id/favorite", auth, favoriteProduct);
+routerAPI.get("/favorites", auth, getFavoriteProducts);
+routerAPI.post("/products/:id/viewed", auth, viewProduct);
+routerAPI.post("/products/:id/buy", auth, buyProduct);
+routerAPI.get("/products/:id/similar", getSimilarProducts);
+routerAPI.get("/products/:id/comments/count", getProductCommentsCount);
 
 
 // Route cần bảo vệ - thêm middleware auth
